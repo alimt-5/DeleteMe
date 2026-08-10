@@ -1,3 +1,3 @@
-package com.example.deleteme.visions
+package com.example.deleteme.vision
 
 enum class HandState {OPEN, CLOSED, NOT_DETECTED }

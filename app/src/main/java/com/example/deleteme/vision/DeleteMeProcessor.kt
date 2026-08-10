@@ -1,4 +1,4 @@
-package com.example.deleteme.visions
+package com.example.deleteme.vision
 
 import android.content.Context
 import android.graphics.Bitmap
@@ -9,9 +9,6 @@ class DeleteMeProcessor(
     context: Context,
     fps: Int = 30,
     registerForSeconds: Float = 0.2f,
-    private var mlBackgroundBitmap: Bitmap? = null,
-    private var mlBackgroundWidth: Int = 0,
-    private var mlBackgroundHeight: Int = 0
 ) {
 
     private val handLandmarker =
@@ -34,12 +31,6 @@ class DeleteMeProcessor(
             false
         )
 
-    /*
-     * ML inference resolution.
-     *
-     * The camera/output frame keeps its original
-     * resolution. Only ML receives this smaller frame.
-     */
     private val mlFrameResizer =
         MlFrameResizer(
             targetWidth = 640,
@@ -99,10 +90,6 @@ class DeleteMeProcessor(
             backgroundBitmap
                 ?: return frame
 
-        /*
-         * The background and camera frame must have
-         * exactly the same dimensions.
-         */
         if (
             frame.width != backgroundWidth ||
             frame.height != backgroundHeight
@@ -110,19 +97,6 @@ class DeleteMeProcessor(
             return frame
         }
 
-        /*
-         * --------------------------------------------------
-         * Create a small frame ONLY for ML inference.
-         * --------------------------------------------------
-         *
-         * Example:
-         *
-         * Original:
-         * 1920 x 1080
-         *
-         * ML:
-         * 640 x 360
-         */
         val mlFrame =
             mlFrameResizer.resize(
                 frame
@@ -130,23 +104,11 @@ class DeleteMeProcessor(
 
         try {
 
-            /*
-             * --------------------------------------------------
-             * 1. Hand detection
-             * --------------------------------------------------
-             */
             val handResult =
                 handLandmarker.detect(
                     mlFrame
                 )
 
-            /*
-             * Original behavior:
-             *
-             * CLOSED -> true
-             * OPEN -> false
-             * NOT_DETECTED -> false
-             */
             val rawHandClosed =
                 when (
                     handResult.state
@@ -162,31 +124,15 @@ class DeleteMeProcessor(
                         false
                 }
 
-            /*
-             * --------------------------------------------------
-             * 2. Stabilize hand state
-             * --------------------------------------------------
-             */
             val handClosed =
                 keepState.update(
                     rawHandClosed
                 )
 
-            /*
-             * --------------------------------------------------
-             * 3. If hand isn't closed,
-             *    don't run person detection.
-             * --------------------------------------------------
-             */
             if (!handClosed) {
                 return frame
             }
 
-            /*
-             * --------------------------------------------------
-             * 4. Detect person on the SMALL ML frame.
-             * --------------------------------------------------
-             */
             val mlPersonBox =
                 personDetector
                     .detectBoundingBox(
@@ -194,12 +140,6 @@ class DeleteMeProcessor(
                     )
                     ?: return frame
 
-            /*
-             * --------------------------------------------------
-             * 5. Convert the bounding box from ML resolution
-             *    back to the original camera resolution.
-             * --------------------------------------------------
-             */
             val personBox =
                 mapPersonBoxToOriginalFrame(
                     box =
@@ -218,22 +158,11 @@ class DeleteMeProcessor(
                     mlFrame.height
                 )
 
-            /*
-             * --------------------------------------------------
-             * 6. Create output using the ORIGINAL resolution.
-             * --------------------------------------------------
-             */
             val output =
                 frame.copy(
                     Bitmap.Config.ARGB_8888,
                     true
                 )
-
-            /*
-             * --------------------------------------------------
-             * 7. Draw the background over the detected person.
-             * --------------------------------------------------
-             */
             val canvas =
                 Canvas(
                     output
@@ -269,29 +198,11 @@ class DeleteMeProcessor(
             return output
 
         } finally {
-
-            /*
-             * mlFrame is only used for inference.
-             *
-             * It is NOT displayed by Compose.
-             *
-             * Therefore it is safe to recycle here.
-             */
             if (mlFrame !== frame) {
                 mlFrame.recycle()
             }
         }
     }
-
-    /*
-     * Converts a bounding box from:
-     *
-     * 640 x 360
-     *
-     * back to:
-     *
-     * original camera resolution
-     */
     private fun mapPersonBoxToOriginalFrame(
         box: PersonBoundingBox,
         originalWidth: Int,
@@ -327,15 +238,8 @@ class DeleteMeProcessor(
                     ).toInt()
 
         val height =
-            (
-                    box.height *
-                            scaleY
-                    ).toInt()
+            (box.height * scaleY).toInt()
 
-        /*
-         * Clamp X and Y so that they stay inside
-         * the original frame.
-         */
         val safeX =
             x.coerceIn(
                 0,
@@ -347,11 +251,6 @@ class DeleteMeProcessor(
                 0,
                 originalHeight
             )
-
-        /*
-         * Make sure width/height don't extend
-         * outside the image.
-         */
         val safeWidth =
             width.coerceAtMost(
                 originalWidth -

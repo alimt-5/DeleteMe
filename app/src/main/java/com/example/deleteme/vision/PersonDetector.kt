@@ -1,4 +1,4 @@
-package com.example.deleteme.visions
+package com.example.deleteme.vision
 
 import android.content.Context
 import android.graphics.Bitmap
@@ -136,14 +136,6 @@ class PersonDetector(
                     imageWidth - x,
                    ( rawWidth + PADDING * 2).toInt()
                 )
-
-            /*
-             * This intentionally goes all
-             * the way to the bottom of the image.
-             *
-             * This matches the original
-             * Python implementation.
-             */
             val height =
                 imageHeight - y
 

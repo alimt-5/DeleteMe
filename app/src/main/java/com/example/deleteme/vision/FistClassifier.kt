@@ -1,4 +1,4 @@
-package com.example.deleteme.visions
+package com.example.deleteme.vision
 
 import kotlin.math.sqrt
 

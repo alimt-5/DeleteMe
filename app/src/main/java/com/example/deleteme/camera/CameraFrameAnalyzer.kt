@@ -3,7 +3,7 @@ package com.example.deleteme.camera
 import android.graphics.Bitmap
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
-import com.example.deleteme.visions.DeleteMeProcessor
+import com.example.deleteme.vision.DeleteMeProcessor
 import java.util.concurrent.atomic.AtomicBoolean
 
 class CameraFrameAnalyzer(

@@ -35,9 +35,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.example.deleteme.camera.CameraFrameAnalyzer
 import com.example.deleteme.camera.toRotatedBitmap
-import com.example.deleteme.visions.DeleteMeProcessor
+import com.example.deleteme.vision.DeleteMeProcessor
 import kotlinx.coroutines.delay
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
@@ -50,7 +51,7 @@ fun BackgroundCaptureScreen(
 
     val context = LocalContext.current
 
-    val lifecycleOwner = androidx.lifecycle.compose.LocalLifecycleOwner.current
+    val lifecycleOwner = LocalLifecycleOwner.current
 
     var currentFrame by remember {
         mutableStateOf<Bitmap?>(null)
@@ -232,9 +233,6 @@ fun BackgroundCaptureScreen(
         }
     }
 
-    /*
-     * Background capture countdown.
-     */
     LaunchedEffect(
         isCapturingBackground
     ) {

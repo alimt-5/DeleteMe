@@ -13,7 +13,10 @@ import com.example.deleteme.ui.theme.DeleteMeTheme
 class MainActivity : ComponentActivity() {
 
     private var cameraPermissionGranted by mutableStateOf(false)
-    private var cameraPermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted -> cameraPermissionGranted = granted }
+    private var cameraPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+            cameraPermissionGranted = granted
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

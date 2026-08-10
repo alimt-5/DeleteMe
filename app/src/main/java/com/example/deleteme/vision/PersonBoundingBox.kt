@@ -1,4 +1,4 @@
-package com.example.deleteme.visions
+package com.example.deleteme.vision
 
 data class PersonBoundingBox(
     val x: Int,

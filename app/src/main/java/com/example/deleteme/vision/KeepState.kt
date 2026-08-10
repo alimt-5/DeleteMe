@@ -1,4 +1,4 @@
-package com.example.deleteme.visions
+package com.example.deleteme.vision
 
 class KeepState(
     keepForSeconds: Float,
