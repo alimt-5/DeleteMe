@@ -1,4 +1,3 @@
-[DeleteMe.md](https://github.com/user-attachments/files/30912462/DeleteMe.md)
 # DeleteMe
 
 > **Real-time person removal from a camera feed using hand gestures, on-device computer vision, and a captured background.**
