@@ -90,7 +90,7 @@ fun BackgroundCaptureScreen(
     val processor = remember {
         DeleteMeProcessor(
             context = context,
-            fps = 30,
+            fps = 10,
             registerForSeconds = 0.2f
         )
     }

@@ -87,72 +87,38 @@ class PersonDetector(
     ): PersonBoundingBox? {
 
         var largestArea = 0L
-
-        var largestBox:
-                PersonBoundingBox? = null
+        var largestBox: PersonBoundingBox? = null
 
         for (detection in result.detections()) {
+            val box = detection.boundingBox()
+            val rawX = box.left
+            val rawY = box.top
+            val rawWidth = box.width()
+            val rawHeight = box.height()
 
-            val box =
-                detection.boundingBox()
-
-            val rawX =
-                box.left
-
-            val rawY =
-                box.top
-
-            val rawWidth =
-                box.width()
-
-            val rawHeight =
-                box.height()
-
-            val area =
-                rawWidth.toLong() *
-                        rawHeight.toLong()
-
+            val area = rawWidth.toLong() * rawHeight.toLong()
             if (area <= largestArea) {
                 continue
             }
+            largestArea = area
 
-            largestArea =
-                area
+            val x = maxOf(0, (rawX - PADDING).toInt())
+            val y = maxOf(0, (rawY - PADDING).toInt())
 
-            val x =
-                maxOf(
-                    0,
-                    (rawX - PADDING).toInt()
-                )
+            val width = minOf(
+                imageWidth - x,
+                (rawWidth + PADDING * 2).toInt()
+            )
+            val height = minOf(
+                imageHeight - y,
+                (rawHeight + PADDING * 2).toInt()
+            )
 
-            val y =
-                maxOf(
-                    0,
-                    (rawY - PADDING).toInt()
-                )
-
-            val width =
-                minOf(
-                    imageWidth - x,
-                   ( rawWidth + PADDING * 2).toInt()
-                )
-            val height =
-                imageHeight - y
-
-            if (
-                width <= 0 ||
-                height <= 0
-            ) {
+            if (width <= 0 || height <= 0) {
                 continue
             }
 
-            largestBox =
-                PersonBoundingBox(
-                    x = x,
-                    y = y,
-                    width = width,
-                    height = height
-                )
+            largestBox = PersonBoundingBox(x = x, y = y, width = width, height = height)
         }
 
         return largestBox
